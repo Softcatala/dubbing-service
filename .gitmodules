@@ -1,0 +1,4 @@
+[submodule "matcha-service/Matcha-TTS"]
+	path = matcha-service/Matcha-TTS
+	url = https://github.com/jordimas/Matcha-TTS.git
+    branch = sc-cli

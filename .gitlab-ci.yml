@@ -1,0 +1,108 @@
+include:
+  - project: 'docker/process-webhooks'
+    file: '/gitlab/deploy.yml'
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  PROJECT_TO_BE_DEPLOYED: 'docker/collserola/dubbing-service'
+
+stages:
+  - dubbing-models
+  - services
+  - deploy
+  - test
+
+test:
+  image: python:3.11.1-slim-bullseye
+  before_script:
+    - pip install nose2
+  stage: test
+  script:
+    - apt-get update && apt-get install make git -y
+    - pip install -r dubbing-batch/requirements.txt
+    - cd dubbing-batch && nose2
+
+dubbing-models:
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+  image: docker:latest
+  services:
+    - docker:dind
+
+  stage: services
+  script:
+    - export REPO_NAME=$CI_REGISTRY_IMAGE/dubbing-models
+    - export IMAGE_NAME=$REPO_NAME:$CI_COMMIT_REF_NAME
+    - export DOCKER_PATH=dubbing-batch/docker/Dockerfile-models
+    - docker build --build-arg HF_TOKEN=$HF_TOKEN --rm  --cache-from $IMAGE_NAME --tag dubbing-models --tag $IMAGE_NAME . -f $DOCKER_PATH
+    - docker push $IMAGE_NAME
+
+dubbing-service:
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: services
+  script:
+    - export REPO_NAME=$CI_REGISTRY_IMAGE/dubbing-service
+    - export IMAGE_NAME=$REPO_NAME:$CI_COMMIT_REF_NAME
+    - export DOCKER_PATH=dubbing-service/docker/Dockerfile
+    - docker build --rm  --no-cache --tag dubbing-service -f $DOCKER_PATH --tag $IMAGE_NAME .
+    - docker push $IMAGE_NAME
+
+dubbing-translator-proxy:
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: services
+  script:
+    - export REPO_NAME=$CI_REGISTRY_IMAGE/dubbing-translator-proxy
+    - export IMAGE_NAME=$REPO_NAME:$CI_COMMIT_REF_NAME
+    - export DOCKER_PATH=dubbing-translator-proxy/docker/Dockerfile
+    - docker build --rm  --cache-from $IMAGE_NAME --tag dubbing-translator-proxy -f $DOCKER_PATH --tag $IMAGE_NAME .
+    - docker push $IMAGE_NAME
+
+matcha-service:
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: services
+  script:
+    - export REPO_NAME=$CI_REGISTRY_IMAGE/matcha-service
+    - export IMAGE_NAME=$REPO_NAME:$CI_COMMIT_REF_NAME
+    - export DOCKER_PATH=matcha-service/docker/Dockerfile
+    - docker build --rm  --cache-from $IMAGE_NAME --tag matcha-service -f $DOCKER_PATH --tag $IMAGE_NAME .
+    - docker push $IMAGE_NAME
+
+
+dubbing-batch:
+  needs:
+    - dubbing-models
+
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: services
+  script:
+    - export REPO_NAME=$CI_REGISTRY_IMAGE/dubbing-batch
+    - export IMAGE_NAME=$REPO_NAME:$CI_COMMIT_REF_NAME
+    - export DOCKER_PATH=dubbing-batch/docker/Dockerfile
+    - docker build --rm --no-cache -f $DOCKER_PATH --tag $IMAGE_NAME .
+    - docker push $IMAGE_NAME
+
+deploy:
+  stage: deploy
+  extends:
+    .default-deploy

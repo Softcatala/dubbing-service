@@ -1,0 +1,16 @@
+FROM python:3.12.7-slim-bullseye AS get_models
+RUN apt-get update -y && apt-get upgrade -y && apt-get install make git -y
+
+# Get models
+COPY Makefile .
+COPY dubbing-batch/requirements.txt .
+RUN pip install -r requirements.txt
+
+ARG HF_TOKEN
+ENV HF_TOKEN=${HF_TOKEN}
+
+RUN make get-models
+
+FROM python:3.12.7-slim-bullseye
+COPY --from=get_models /root/.cache/huggingface/  /srv/models/huggingface/
+COPY --from=get_models /root/.cache/torch/  /srv/models/torch/

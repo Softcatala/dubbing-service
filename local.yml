@@ -1,0 +1,87 @@
+version: "3"
+
+services:
+  dubbing-service:
+    image: dubbing-service:latest
+    restart: always
+    ports:
+      - "8700:8700"
+
+    volumes:
+      - dubbing-files:/srv/data
+
+    networks:
+      - default
+      - sc
+
+    networks:
+      - default
+      - sc
+
+    environment:
+      LOGLEVEL: "DEBUG"
+      LOGDIR: "/srv/data/logs"
+
+  dubbing-translator-proxy:
+    image: dubbing-translator-proxy:latest
+    restart: always
+    ports:
+      - "8500:8700"
+
+    volumes:
+      - dubbing-files:/srv/data
+
+    networks:
+      - default
+      - sc
+
+    environment:
+      LOGLEVEL: "DEBUG"
+      LOGDIR: "/srv/data/logs"
+
+  matcha-service:
+    image: matcha-service:latest
+    restart: always
+    ports:
+      - "8100:8100"
+
+    volumes:
+      - dubbing-files:/srv/data
+
+    networks:
+      - default
+      - sc
+
+    environment:
+      LOGLEVEL: "DEBUG"
+      LOGDIR: "/srv/data/logs"
+      #TRANSFORMERS_OFFLINE: 1
+
+  dubbing-batch_1:
+    image: dubbing-batch:latest
+    restart: always
+
+    volumes:
+      - dubbing-files:/srv/data
+
+    networks:
+      - default
+      - sc
+
+    networks:
+      - default
+      - sc
+
+    environment:
+      LOGLEVEL: "DEBUG"
+      LOGID: "1"
+      LOGDIR: "/srv/data/logs"
+      TRANSFORMERS_OFFLINE: 1
+
+networks:
+  sc:
+    external:
+      name: softcatala
+
+volumes:
+  dubbing-files:
