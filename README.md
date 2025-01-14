@@ -4,6 +4,12 @@ The dubbing-service provides the following functionality:
 * Receives files and creates a priortized queue to serve them
 * Notifies by email when file is ready or it has been error
 
+
+#  Git clone
+
+To clone the repository and its submodules use:
+``git clone --recurse-submodules git@github.com:Softcatala/dubbing-service.git``
+
 # Running the system locally using Docker
 
 This requires that you have *docker*, *docker-compose* and *make* installed in your system.
