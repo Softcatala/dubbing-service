@@ -230,7 +230,7 @@ def main():
             processed.move_file_bin(log_filename, ".log")
             processed.move_file_bin(source_file, extension)
 
-            if batchfile.operation == "create":
+            if batchfile.operation == "create" and os.environ.get("KEEP_FILES", 0) == 0:
                 files = ProcessedFiles._find_files(output_directory, "chunk*")
                 for file in files:
                     os.remove(file)
