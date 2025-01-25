@@ -28,7 +28,11 @@ function sendFile()
 
             if (xmlHttp.status == 200)
             {
-                alert("D'aquí a una estona rebreu el fitxer traduït per correu electrònic");
+                var jsonResponse = JSON.parse(xmlHttp.responseText);
+                var uuid = jsonResponse['uuid'];
+                element = document.getElementById('download-dub');
+                element.innerText = uuid;
+                element.href = URL + `/get_file?uuid=` + uuid + `&ext=dub`;
             }
             else
             {
