@@ -6,7 +6,8 @@ COPY dubbing-batch/requirements.txt /srv/
 
 FROM dubbing-models AS models
 FROM nvidia/cuda:12.3.1-base-ubuntu22.04
-RUN apt-get update -y && apt-get upgrade -y && apt-get install ffmpeg  git -y
+#apt-cache show ffmpeg
+RUN apt-get update -y && apt-get upgrade -y && apt-get install ffmpeg=7:4.4.2-0ubuntu0.22.04.1  git -y
 RUN apt-get install python3-pip python3-dev -y --no-install-recommends
 
 # Solve errors:
