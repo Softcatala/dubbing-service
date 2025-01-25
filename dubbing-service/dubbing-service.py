@@ -360,7 +360,7 @@ def upload_file():
         f"Saved file {file.filename} to {fullname} (size: {size_mb:.2f}MB) for user {email}, waiting_queue: {waiting_queue}"
     )
     Usage().log("dubbing_file")
-    result = {"waiting_queue": str(waiting_queue), "filename": file.filename}
+    result = {"waiting_queue": str(waiting_queue), "filename": file.filename, "uuid": _uuid}
     return json_answer(result)
 
 
