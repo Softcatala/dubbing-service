@@ -32,7 +32,7 @@ function sendFile()
                 var uuid = jsonResponse['uuid'];
                 element = document.getElementById('download-dub');
                 element.innerText = uuid;
-                element.href = URL + `/get_file/uuid?=` + uuid + `&dub`;
+                element.href = URL + `/get_file?uuid=` + uuid + `&ext=dub`;
             }
             else
             {
