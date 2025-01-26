@@ -10,7 +10,7 @@ docker-build-dubbing-service:
 	docker build --rm -t dubbing-service . -f dubbing-service/docker/Dockerfile;
 
 docker-build-dubbing-batch: docker-build-dubbing-models
-	docker build --no-cache --rm -t dubbing-batch . -f dubbing-batch/docker/Dockerfile;
+	docker build --rm -t dubbing-batch . -f dubbing-batch/docker/Dockerfile;
 	docker image ls | grep dubbing
 
 docker-build-dubbing-translator-proxy:
