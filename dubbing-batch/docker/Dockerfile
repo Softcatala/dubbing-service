@@ -21,7 +21,7 @@ WORKDIR /srv
 
 COPY --from=copied_files /srv/ /srv/
 RUN pip3 install -r /srv/requirements.txt
-RUN pip3 uninstall moviepy
+RUN pip3 uninstall -y moviepy
 RUN pip3 install git+https://github.com/Zulko/moviepy.git@52329a190fb4594745ff1c19ff424e034d7031d2#egg=moviepy
 
 WORKDIR /srv
