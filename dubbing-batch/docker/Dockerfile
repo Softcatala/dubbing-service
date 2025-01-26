@@ -22,5 +22,11 @@ WORKDIR /srv
 COPY --from=copied_files /srv/ /srv/
 RUN pip3 install -r /srv/requirements.txt
 
+# Temporary fix until moviepy 2.13 is released
+RUN pip3 uninstall -y moviepy
+RUN git clone https://github.com/Zulko/moviepy.git moviepy
+RUN cd moviepy && pip install -e .
+RUN python3 -c "import moviepy; print(moviepy.__version__)"
+
 WORKDIR /srv
 ENTRYPOINT /srv/entry-point.sh
