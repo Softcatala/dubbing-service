@@ -1,1 +1,1 @@
-gunicorn --workers=2 --threads=4 --graceful-timeout 120 --timeout 120 tts-service:app -b 0.0.0.0:8100
+gunicorn --limit-request-line 8192 --workers=2 --threads=4 --graceful-timeout 120 --timeout 120 tts-service:app -b 0.0.0.0:8100
