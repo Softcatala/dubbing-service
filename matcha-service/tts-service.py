@@ -28,6 +28,7 @@ import logging.handlers
 import os
 import json
 from functools import lru_cache
+import re
 
 sys.path.append("Matcha-TTS/")
 
@@ -95,6 +96,11 @@ def voice_api():
 
     cleaner = ""
     spk_id = None
+
+    cleaned = re.sub(r"[(){}]", "", text)  # TTS crashes on these
+    if text != cleaned:
+        logging.debug(f"Cleaned text '{text}' to '{cleaned}'")
+        text = cleaned
 
     try:
         with tempfile.NamedTemporaryFile(suffix=".wav") as temp_file:
