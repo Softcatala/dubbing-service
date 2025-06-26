@@ -181,7 +181,7 @@ class Execution(object):
         # Hardcoded since we always offer the option to download them
         dubbed_subtitles = "--dubbed_subtitles"  # if dubbed_subtitles else ""
         update = "--update" if update_operation else ""
-        cmd = f'set OMP_NUM_THREADS=8 && set MKL_NUM_THREADS=8 && open-dubbing --whisper_model medium --input_file "{input_file}" --output_directory="{output_directory}" --device={device} --translator=apertium --apertium_server={APERTIUM_SERVER} --target_language cat {source_param} --hugging_face_token NONE --tts_api_server {TTS_URL} --tts api --target_language_region {full_variant} {update} {original_subtitles} {dubbed_subtitles} --vad'
+        cmd = f'set OMP_NUM_THREADS=8 && set MKL_NUM_THREADS=8 && open-dubbing --whisper_model medium --input_file "{input_file}" --output_directory="{output_directory}" --device={device} --device_pyannote=cpu --translator=apertium --apertium_server={APERTIUM_SERVER} --target_language cat {source_param} --hugging_face_token NONE --tts_api_server {TTS_URL} --tts api --target_language_region {full_variant} {update} {original_subtitles} {dubbed_subtitles} --vad'
         result = Command(cmd).run(timeout=timeout)
         end_time = datetime.datetime.now() - start_time
         logging.debug(f"Run {cmd} in {end_time} with result {result}")

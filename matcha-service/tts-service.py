@@ -46,7 +46,6 @@ MULTIACCENT_MODEL = "projecte-aina/matxa-tts-cat-multiaccent"
 DEFAULT_CLEANER = "catalan_cleaners"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-threads = torch.get_num_threads()
 torch.set_num_threads(8)
 threads = torch.get_num_threads()
 
